@@ -1,0 +1,14 @@
+.pagination {
+    .page-item {
+        .page-link {
+            color: #fff;
+            background-color: rgb(153 153 153) !important;
+        }
+        &.disabled .page-link {
+            background-color: rgb(171, 171, 171) !important;
+        }
+        &.active .page-link {
+            background-color: var(--second-color) !important;
+        }
+    }
+}
