@@ -286,7 +286,7 @@ export default function ProductShow() {
                   </div>
                 })}
               </div>
-              <button type="submit" disabled={!formik.isValid && !formik.dirty} className="btn submit_form">أشترى الان الدفع بعد الاستلام</button>
+              <button type="submit" disabled={!formik.isValid || !formik.dirty} className="btn submit_form">أشترى الان الدفع بعد الاستلام</button>
             </form>
 
 

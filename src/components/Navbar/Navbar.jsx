@@ -1,9 +1,10 @@
 import React from 'react'
 import './Navbar.scss';
-import logo from '../../assets/logo.jpeg';
 import { Link, NavLink } from 'react-router-dom';
 
-export default function Navbar() {
+export default function Navbar(props) {
+
+  const {logo} = props;
   return (
     <>
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
