@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "./ProductShow.scss";
-import { useParams } from "react-router-dom";
-import iconMinus from "../../assets/product/icon-minus.png";
-import iconPlus from "../../assets/product/icon-plus.png";
+import { useNavigate, useParams } from "react-router-dom";
 import defaultImage from "../../assets/product/default.jpg";
-import p2 from "../../assets/product/2.png";
 import BreadCrumb from "../../components/BreadCrumb/BreadCrumb";
 import { getProductById } from "../../api/Product";
+import { createOrder } from "../../api/Order";
+
 import * as Yup from "yup";
 
+
+// Toastr
+import {toastrError, toastrSuccess} from '../../components/Toastr/Toastr'
 
 // Swiper
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -30,6 +32,8 @@ export default function ProductShow() {
   let [selectedColors, setSelectedColors] = useState([]);
   let [selectedSizes, setSelectedSizes] = useState([]);
   let [activeBoxIndex, setActiveBoxIndex] = useState(0);
+  let naviate = useNavigate();
+
 
 
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -91,6 +95,8 @@ export default function ProductShow() {
   }
 
   useEffect(() => {
+
+
     getProductById(id)
       .then((data) => {
 
@@ -103,8 +109,9 @@ export default function ProductShow() {
 
       })
       .catch((err) =>  {
-        console.log(err)
+        toastrError(err.message)
       });
+
   }, []);
 
 
@@ -124,9 +131,17 @@ export default function ProductShow() {
       orderData.sizes =  selectedSizes.map((index) => product.sizes[index].id)
     }
 
-
-    console.log(orderData)
-
+    
+    createOrder(orderData).then((res) => {
+      toastrSuccess(res.message)
+      if(res.status) {
+        formik.resetForm();
+      } else {
+        toastrError(res.message)
+      }
+    }).catch((err) => {
+      toastrError(err.message)
+    })
   }
 
 

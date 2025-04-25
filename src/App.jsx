@@ -17,6 +17,9 @@ import Layout from './pages/Layout/Layout';
 import ProductShow from './pages/ProductShow/ProductShow';
 
 
+
+
+
 const routers = createBrowserRouter([
   {path: '', element: <Layout/>, children: [
     {index: true, element: <Products/>},
