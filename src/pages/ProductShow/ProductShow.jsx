@@ -159,15 +159,23 @@ export default function ProductShow() {
               <div className="list d-flex align-items-center">
                 
                     <Swiper
-                      modules={[Navigation, Pagination, Scrollbar, A11y]}
-                      spaceBetween={50}
-                      slidesPerView={3}
+                      modules={[Navigation, Pagination]}
+                      spaceBetween={20}
+                      slidesPerView={2}
                       navigation
                       pagination={{ clickable: true }}
-                      scrollbar={{ draggable: true }}
-                      // onSwiper={(swiper) => console.log(swiper)}
-                      // onSlideChange={() => console.log('slide change')}
-                >
+                      // breakpoints={{
+                      //   640: {
+                      //     slidesPerView: 2,
+                      //   },
+                      //   768: {
+                      //     slidesPerView: 3,
+                      //   },
+                      //   1024: {
+                      //     slidesPerView: 4,
+                      //   },
+                      // }}
+                    >
                   {photos.length > 0 ? photos.map((photo, index) => {
                     return  <SwiperSlide><div className="img"><img key={index} src={apiUrl + photo} alt="" /></div></SwiperSlide>;
                   }) : ''}

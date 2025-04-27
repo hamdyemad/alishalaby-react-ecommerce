@@ -12,6 +12,7 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 import Loader from './components/Loader/Loader';
 import Notfound from './components/Notfound/Notfound';
 import Products from './pages/Products/Products';
+import AdminPage from './pages/AdminPage/AdminPage';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './pages/Layout/Layout';
 import ProductShow from './pages/ProductShow/ProductShow';
@@ -24,6 +25,7 @@ const routers = createBrowserRouter([
   {path: '', element: <Layout/>, children: [
     {index: true, element: <Products/>},
     {path: '/products/:id', element: <ProductShow/>},
+    {path: '/admin', element: <AdminPage/>},
     {path: '*', element: <Notfound/>}
   ]}
 ]);
