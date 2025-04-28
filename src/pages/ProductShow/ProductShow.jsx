@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./ProductShow.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import defaultImage from "../../assets/product/default.jpg";
@@ -33,6 +33,10 @@ export default function ProductShow() {
   let [selectedSizes, setSelectedSizes] = useState([]);
   let [activeBoxIndex, setActiveBoxIndex] = useState(0);
   let naviate = useNavigate();
+  const ActiveImageRef = useRef(null);
+  const [scale, setScale] = useState(1);
+  const [transformOrigin, setTransformOrigin] = useState('center center');
+
 
 
 
@@ -94,12 +98,25 @@ export default function ProductShow() {
 
   }
 
-  useEffect(() => {
+  function handleMouseMove(e) {
+    const { width, height, left, top } = e.target.getBoundingClientRect();
+    const offsetX = e.clientX - left;
+    const offsetY = e.clientY - top;
 
+    // Calculate the scale based on mouse position
+    const scaleValue = 1 + (Math.abs(offsetX - width / 2) + Math.abs(offsetY - height / 2)) / 500;
+
+    // Set the scale value and transform origin to the mouse position
+    setScale(scaleValue);
+    setTransformOrigin(`${(offsetX / width) * 100}% ${(offsetY / height) * 100}%`);
+
+  }
+
+  useEffect(() => {
 
     getProductById(id)
       .then((data) => {
-
+        console.log(data)
         if(data) {
           (data.photos) ? setPhotos(JSON.parse(data.photos)) : '';
           setProduct(data);
@@ -114,6 +131,11 @@ export default function ProductShow() {
 
   }, []);
 
+
+  function changeImageView(e) {
+    let clicked_img = e.target;
+    ActiveImageRef.current.src = clicked_img.src;
+  }
 
 
   function handleSubmit(values) {
@@ -154,7 +176,19 @@ export default function ProductShow() {
           <div className="col-md-8">
             <div className="images">
               <div className="active mb-3">
-                {photos.length > 0 ? <img src={apiUrl + photos[0]} alt="active photo" /> : <img src={defaultImage} alt="active photo" />}
+                {photos.length > 0 ? <img 
+                ref={ActiveImageRef}
+                 onMouseMove={handleMouseMove}
+                  src={apiUrl + photos[0]}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    transition: 'transform 0.1s ease',
+                    transform: `scale(${scale})`,
+                    transformOrigin: transformOrigin,
+                  }}
+                   alt="active photo" /> : <img src={defaultImage} alt="active photo" />}
               </div>
               <div className="list d-flex align-items-center">
                 
@@ -164,20 +198,9 @@ export default function ProductShow() {
                       slidesPerView={2}
                       navigation
                       pagination={{ clickable: true }}
-                      // breakpoints={{
-                      //   640: {
-                      //     slidesPerView: 2,
-                      //   },
-                      //   768: {
-                      //     slidesPerView: 3,
-                      //   },
-                      //   1024: {
-                      //     slidesPerView: 4,
-                      //   },
-                      // }}
                     >
                   {photos.length > 0 ? photos.map((photo, index) => {
-                    return  <SwiperSlide><div className="img"><img key={index} src={apiUrl + photo} alt="" /></div></SwiperSlide>;
+                    return  <SwiperSlide><div className="img"><img  onClick={changeImageView} key={index} src={apiUrl + photo} alt="" /></div></SwiperSlide>;
                   }) : ''}
                   
                 </Swiper>
