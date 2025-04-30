@@ -191,14 +191,16 @@ export default function ProductShow() {
                    alt="active photo" /> : <img src={defaultImage} alt="active photo" />}
               </div>
               <div className="list d-flex align-items-center">
-                
                     <Swiper
-                      modules={[Navigation, Pagination]}
-                      spaceBetween={20}
-                      slidesPerView={2}
+                      slidesPerView={3}
+                      spaceBetween={30}
+                      pagination={{
+                        clickable: true,
+                      }}
                       navigation
-                      pagination={{ clickable: true }}
+                      modules={[Pagination, Navigation]}
                     >
+                      
                   {photos.length > 0 ? photos.map((photo, index) => {
                     return  <SwiperSlide><div className="img"><img  onClick={changeImageView} key={index} src={apiUrl + photo} alt="" /></div></SwiperSlide>;
                   }) : ''}
@@ -216,44 +218,11 @@ export default function ProductShow() {
                 <h4 className="text-decoration-line-through old_price">{product?.price?.price} جنيه</h4>
                 <h4 className="main_price">{product?.price?.price_after_discount} جنيه</h4>
               </div>
-              <p>{product?.description}</p>
+              <p dangerouslySetInnerHTML={{ __html: product?.description }}></p>
             </div>
             <hr />
             <h5>للطلب الرجاء ادخال التفاصيل</h5>
             <form action="" onSubmit={formik.handleSubmit}>
-              <div className="form-group mb-2">
-                <input className="form-control" type="text" placeholder="الاسم"name="name"
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  />
-                  {(formik.touched.name && formik.errors.name) ? <div className="text-danger">{formik.errors.name}</div> : ''}
-              </div>
-              <div className="form-group mb-2">
-                <input className="form-control" type="text" placeholder="رقم الهاتف"name="phone"
-                  value={formik.values.phone}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  />
-                  {(formik.touched.phone && formik.errors.phone) ? <div className="text-danger">{formik.errors.phone}</div> : ''}
-              </div>
-              <div className="form-group mb-2">
-                <input className="form-control" type="text" placeholder="العنوان"name="address"
-                  value={formik.values.address}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  />
-                  {(formik.touched.address && formik.errors.address) ? <div className="text-danger">{formik.errors.address}</div> : ''}
-              </div>
-              <div className="form-group">
-                <textarea name="notes" className="form-control" placeholder="الملاحظات"
-                value={formik.values.notes}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                ></textarea>
-                {(formik.touched.notes && formik.errors.notes) ? <div className="text-danger">{formik.errors.notes}</div> : ''}
-              </div>
-
               <div className="prices">
                 {product?.prices?.map((priceObj, boxIndex) => {
                   return <div className={`box ${(activeBoxIndex == boxIndex) ? 'active' : ''}`} id={`box-${boxIndex}`} onClick={(e) => changeBox(boxIndex, e)} key={boxIndex}>
@@ -316,6 +285,38 @@ export default function ProductShow() {
                     
                   </div>
                 })}
+              </div>
+              <div className="form-group mb-2">
+                <input className="form-control" type="text" placeholder="الاسم"name="name"
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  />
+                  {(formik.touched.name && formik.errors.name) ? <div className="text-danger">{formik.errors.name}</div> : ''}
+              </div>
+              <div className="form-group mb-2">
+                <input className="form-control" type="text" placeholder="رقم الهاتف"name="phone"
+                  value={formik.values.phone}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  />
+                  {(formik.touched.phone && formik.errors.phone) ? <div className="text-danger">{formik.errors.phone}</div> : ''}
+              </div>
+              <div className="form-group mb-2">
+                <input className="form-control" type="text" placeholder="العنوان"name="address"
+                  value={formik.values.address}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  />
+                  {(formik.touched.address && formik.errors.address) ? <div className="text-danger">{formik.errors.address}</div> : ''}
+              </div>
+              <div className="form-group">
+                <textarea name="notes" className="form-control" placeholder="الملاحظات"
+                value={formik.values.notes}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                ></textarea>
+                {(formik.touched.notes && formik.errors.notes) ? <div className="text-danger">{formik.errors.notes}</div> : ''}
               </div>
               <button type="submit" disabled={!formik.isValid || !formik.dirty} className="btn submit_form">أشترى الان الدفع بعد الاستلام</button>
             </form>
