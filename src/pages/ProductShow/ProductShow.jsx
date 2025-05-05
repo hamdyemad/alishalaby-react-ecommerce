@@ -31,7 +31,10 @@ export default function ProductShow() {
   let [photos, setPhotos] = useState([]);
   let [selectedColors, setSelectedColors] = useState([]);
   let [selectedSizes, setSelectedSizes] = useState([]);
-  let [activeBoxIndex, setActiveBoxIndex] = useState(0);
+  let [activeBoxIndex, setActiveBoxIndex] = useState(1);
+  let [photosCount, setPhotosCount] = useState(0);
+  const swiperRef = useRef(null);
+
   let naviate = useNavigate();
   const ActiveImageRef = useRef(null);
   const [scale, setScale] = useState(1);
@@ -118,18 +121,31 @@ export default function ProductShow() {
     getProductById(id)
       .then((data) => {
         if(data) {
+          let photosData = JSON.parse(data.photos);
           (data.photos) ? setPhotos(JSON.parse(data.photos)) : '';
           setProduct(data);
+          setPhotosCount(photosData.length)
+
+          if (swiperRef.current && swiperRef.current.swiper) {
+            console.log(swiperRef.current.swiper)
+            swiperRef.current.swiper.update();
+          }
+
           setSelectedColors(Array(data.prices[activeBoxIndex].qty).fill(0))
           setSelectedSizes(Array(data.prices[activeBoxIndex].qty).fill(0))
         }
 
       })
       .catch((err) =>  {
+        toastrError('لا يوجد منتج')
+        naviate('/')
         toastrError(err.message)
       });
 
   }, []);
+
+
+
 
 
   function changeImageView(e) {
@@ -201,9 +217,11 @@ export default function ProductShow() {
                   }}
                    alt="active photo" /> : <img src={defaultImage} alt="active photo" />}
               </div>
-              {photos.length > 1 ? <div className="list d-flex align-items-center">
+              <div className="list d-flex align-items-center">
+              {photosCount > 0 && (
                     <Swiper
-                      spaceBetween={30}
+                      ref={swiperRef}
+                      spaceBetween={0}
                       pagination={{
                         clickable: true,
                       }}
@@ -211,21 +229,22 @@ export default function ProductShow() {
                       modules={[Pagination, Navigation]}
                       breakpoints={{
                         0: {
-                          slidesPerView: 2,
+                          slidesPerView: 3,
                         },
                         768: {
-                          slidesPerView: 3,
+                          slidesPerView: (photosCount > 6) ? 6 : photosCount ,
                         },
                       }}
                     >
-                      
-                  {photos.length > 0 ? photos.map((photo, index) => {
-                    return  <SwiperSlide><div className="img"><img  onClick={changeImageView} key={index} src={apiUrl + photo} alt="" /></div></SwiperSlide>;
+                  {photos?.length > 0 ? photos?.map((photo, index) => {
+                    return  <SwiperSlide><div className="img"><img  
+                    onClick={changeImageView} key={index} src={apiUrl + photo} alt="" /></div></SwiperSlide>;
                   }) : ''}
                   
-                </Swiper>
-                
-              </div>: ''}
+                    </Swiper>
+              )}
+              </div>
+              {console.log(photosCount)}
               
               
             </div>
