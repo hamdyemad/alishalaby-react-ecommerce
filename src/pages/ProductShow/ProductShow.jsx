@@ -46,6 +46,7 @@ export default function ProductShow() {
     name: Yup.string().required('الأسم مطلوب'),
     address: Yup.string().required('العنوان مطلوب'),
     phone: Yup.string().required('رقم الهاتف مطلوب'),
+    phone2: Yup.string(),
     notes: Yup.string()
   });
 
@@ -53,10 +54,11 @@ export default function ProductShow() {
     initialValues: {
       name: '',
       phone: '',
+      phone2: '',
       address: '',
       notes: '',
     },
-    validationSchema,
+    // validationSchema,
     onSubmit: handleSubmit
   })
 
@@ -75,6 +77,7 @@ export default function ProductShow() {
   // Function to handle color selection for each quantity
   function changeColor(colorIndex, quantityIndex) {
     let updatedColors = [...selectedColors];
+    console.log(updatedColors)
     updatedColors[quantityIndex] = colorIndex;  // Store the color selection for the quantity
     setSelectedColors(updatedColors);
   }
@@ -88,13 +91,13 @@ export default function ProductShow() {
 
 
 
-
-
   function changeBox(boxIndex, event) {
     setActiveBoxIndex(boxIndex)
 
+    console.log(Array(product.prices[boxIndex].qty).fill(0))
     setSelectedColors(Array(product.prices[boxIndex].qty).fill(0))
     setSelectedSizes(Array(product.prices[boxIndex].qty).fill(0))
+
 
   }
 
@@ -148,21 +151,31 @@ export default function ProductShow() {
     };
 
 
+    console.log(product?.colors)
     if(product.colors.length > 0) {
-      orderData.colors =  selectedColors.map((index) => product.colors[index].id)
-      orderData.sizes =  selectedSizes.map((index) => product.sizes[index].id)
+      orderData.colors =  selectedColors.map((index) => product?.colors[index].id)
+      orderData.sizes =  selectedSizes.map((index) => product?.sizes[index].id)
     }
 
-    
     createOrder(orderData).then((res) => {
       toastrSuccess(res.message)
       if(res.status) {
         formik.resetForm();
+        setSelectedColors(Array(product.prices[activeBoxIndex].qty).fill(0))
+        setSelectedSizes(Array(product.prices[activeBoxIndex].qty).fill(0))
       } else {
         toastrError(res.message)
       }
     }).catch((err) => {
-      toastrError(err.message)
+      const formatted = {};
+      const errorObject = err.response.data.errors;
+      for(const key in errorObject) {
+        if (Array.isArray(errorObject[key]) && errorObject[key].length > 0) {
+          formatted[key] = errorObject[key][0]; // Take the first error message
+        }
+      }
+      formik.setErrors(formatted)
+      toastrError(err.response.data.message)
     })
   }
 
@@ -192,13 +205,20 @@ export default function ProductShow() {
               </div>
               <div className="list d-flex align-items-center">
                     <Swiper
-                      slidesPerView={3}
                       spaceBetween={30}
                       pagination={{
                         clickable: true,
                       }}
                       navigation
                       modules={[Pagination, Navigation]}
+                      breakpoints={{
+                        0: {
+                          slidesPerView: 2,
+                        },
+                        768: {
+                          slidesPerView: 3,
+                        },
+                      }}
                     >
                       
                   {photos.length > 0 ? photos.map((photo, index) => {
@@ -212,11 +232,11 @@ export default function ProductShow() {
             </div>
           </div>
           <div className="col-md-4">
-            <div className="info">
+            <div className="info mt-3">
               <h2>{product?.name}</h2>
               <div className="prices d-flex align-items-center">
-                <h4 className="text-decoration-line-through old_price">{product?.price?.price} جنيه</h4>
-                <h4 className="main_price">{product?.price?.price_after_discount} جنيه</h4>
+                <h4 className="text-decoration-line-through old_price fw-bold">{product?.price?.price} جنيه</h4>
+                <h4 className="main_price  fw-bold">{product?.price?.price_after_discount} جنيه</h4>
               </div>
               <p dangerouslySetInnerHTML={{ __html: product?.description }}></p>
             </div>
@@ -225,12 +245,13 @@ export default function ProductShow() {
             <form action="" onSubmit={formik.handleSubmit}>
               <div className="prices">
                 {product?.prices?.map((priceObj, boxIndex) => {
-                  return <div className={`box ${(activeBoxIndex == boxIndex) ? 'active' : ''}`} id={`box-${boxIndex}`} onClick={(e) => changeBox(boxIndex, e)} key={boxIndex}>
+                  return <div className={`box ${(activeBoxIndex == boxIndex) ? 'active' : ''}`} 
+                  id={`box-${boxIndex}`} onClick={(e) => changeBox(boxIndex, e)} key={boxIndex}>
                     <div className="header d-flex align-items-center justify-content-between">
                       <h6 className="text">{priceObj.description}</h6>
                       <div className="prices">
-                        <h6 className="old_price text-decoration-line-through">{priceObj.price} جنيه</h6>
-                        <h6 className="price">{priceObj.price_after_discount} جنيه</h6>
+                        <h6 className="old_price text-decoration-line-through fw-bold">{priceObj.price} جنيه</h6>
+                        <h6 className="price  fw-bold">{priceObj.price_after_discount} جنيه</h6>
                       </div>
                     </div>
                     {(product?.colors.length > 0 || product?.sizes.length > 0) ? <div className={`card mt-3 ${(activeBoxIndex != boxIndex) ? 'd-none' : ''}`} onClick={(e) => e.stopPropagation()}>
@@ -241,52 +262,42 @@ export default function ProductShow() {
                         {[...Array(priceObj.qty)].map((val, qtyObjectIndex) => {
                           return <div className="object" id={`object-${qtyObjectIndex}`} key={qtyObjectIndex}>
                             #{qtyObjectIndex + 1}
-                            {product?.colors.length > 0 ? <div className="colors d-flex align-items-center mb-2">
+                            <div className="d-flex align-items-center mb-2 colors">
                               <h6>الالوان: </h6>
-                              {product?.colors?.map((color, colorIndex) => {
-                                return (
-                                  <div
-                                    key={colorIndex}
-                                    className={`color ${
-                                      selectedColors[qtyObjectIndex] === colorIndex ? 'active' : ''
-                                      ||
-                                      colorIndex == 0 && selectedColors[qtyObjectIndex] != colorIndex && isNaN(selectedColors[qtyObjectIndex]) ? 'active' : ''
-
-                                    }`}  id={`color-${colorIndex}`} onClick={() => changeColor(colorIndex, qtyObjectIndex)}
-                                    style={{ backgroundColor: color?.value }}
-                                  ></div>
-                                );
-                              })}
-                            </div> : ''}
-                            
+                              <select className="form-control"
+                                value={selectedColors[qtyObjectIndex] || 0}
+                              onChange={(e) => changeColor(e.target.value,qtyObjectIndex)}>
+                                {product?.colors?.map((color, colorIndex) => {
+                                  return <option key={colorIndex} value={colorIndex} 
+                                  id={`color-${colorIndex}`} 
+                                  >{color?.variant}</option>;
+                                })}
+                              </select>
+                            </div>
                             {product?.sizes.length > 0 ? <div className="sizes d-flex align-items-center mb-3">
                               <h6>المقاسات: </h6>
-                              {product?.sizes?.map((size, sizeIndex ) => {
-                                return (
-                                  <div
-                                    key={sizeIndex}
-                                    
-                                    className={`size ${
-                                      selectedSizes[qtyObjectIndex] === sizeIndex ? 'active' : ''
-                                      ||
-                                      sizeIndex == 0 && selectedSizes[qtyObjectIndex] != sizeIndex && isNaN(selectedSizes[qtyObjectIndex]) ? 'active' : ''
-                                    }`} id={`size-${sizeIndex}`}
-                                    onClick={() => changeSize(sizeIndex, qtyObjectIndex)}
-                                  >{size?.variant}</div>
-                                );
-                              })}
-                            </div> : ''}
-                            
+                              <select className="form-control" 
+                                value={selectedSizes[qtyObjectIndex] || 0}
+                              onChange={(e) => changeSize(e.target.value, qtyObjectIndex)}>
+                                {
+                                  product?.sizes?.map((size, sizeIndex) => {
+                                    return <option key={sizeIndex} value={sizeIndex} 
+                                    id={`size-${sizeIndex}`} 
+                                    >{size?.variant}</option>;
+                                  })
+                                }
+                              </select>
+                            </div> : ''}      
+                            {[...Array(priceObj.qty)].length - 1 > qtyObjectIndex ? <hr />  : ''}
+                                       
                           </div>
                         })}
                       </div>
                     </div>: ''}
-                    
-                    
                   </div>
                 })}
               </div>
-              <div className="form-group mb-2">
+              <div className="form-group mb-3">
                 <input className="form-control" type="text" placeholder="الاسم"name="name"
                   value={formik.values.name}
                   onChange={formik.handleChange}
@@ -294,7 +305,7 @@ export default function ProductShow() {
                   />
                   {(formik.touched.name && formik.errors.name) ? <div className="text-danger">{formik.errors.name}</div> : ''}
               </div>
-              <div className="form-group mb-2">
+              <div className="form-group mb-3">
                 <input className="form-control" type="text" placeholder="رقم الهاتف"name="phone"
                   value={formik.values.phone}
                   onChange={formik.handleChange}
@@ -302,7 +313,15 @@ export default function ProductShow() {
                   />
                   {(formik.touched.phone && formik.errors.phone) ? <div className="text-danger">{formik.errors.phone}</div> : ''}
               </div>
-              <div className="form-group mb-2">
+              <div className="form-group mb-3">
+                <input className="form-control" type="text" placeholder="رقم الهاتف الثانى"name="phone2"
+                  value={formik.values.phone2}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  />
+                  {(formik.touched.phone2 && formik.errors.phone2) ? <div className="text-danger">{formik.errors.phone2}</div> : ''}
+              </div>
+              <div className="form-group mb-3">
                 <input className="form-control" type="text" placeholder="العنوان"name="address"
                   value={formik.values.address}
                   onChange={formik.handleChange}
@@ -318,7 +337,8 @@ export default function ProductShow() {
                 ></textarea>
                 {(formik.touched.notes && formik.errors.notes) ? <div className="text-danger">{formik.errors.notes}</div> : ''}
               </div>
-              <button type="submit" disabled={!formik.isValid || !formik.dirty} className="btn submit_form">أشترى الان الدفع بعد الاستلام</button>
+              <button type="submit" 
+              className="btn submit_form">أشترى الان الدفع بعد الاستلام</button>
             </form>
 
 
