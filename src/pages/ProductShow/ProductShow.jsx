@@ -203,7 +203,7 @@ export default function ProductShow() {
                   }}
                    alt="active photo" /> : <img src={defaultImage} alt="active photo" />}
               </div>
-              <div className="list d-flex align-items-center">
+              {photos.length > 1 ? <div className="list d-flex align-items-center">
                     <Swiper
                       spaceBetween={30}
                       pagination={{
@@ -227,7 +227,8 @@ export default function ProductShow() {
                   
                 </Swiper>
                 
-              </div>
+              </div>: ''}
+              
               
             </div>
           </div>
