@@ -77,7 +77,6 @@ export default function ProductShow() {
   // Function to handle color selection for each quantity
   function changeColor(colorIndex, quantityIndex) {
     let updatedColors = [...selectedColors];
-    console.log(updatedColors)
     updatedColors[quantityIndex] = colorIndex;  // Store the color selection for the quantity
     setSelectedColors(updatedColors);
   }
@@ -94,7 +93,6 @@ export default function ProductShow() {
   function changeBox(boxIndex, event) {
     setActiveBoxIndex(boxIndex)
 
-    console.log(Array(product.prices[boxIndex].qty).fill(0))
     setSelectedColors(Array(product.prices[boxIndex].qty).fill(0))
     setSelectedSizes(Array(product.prices[boxIndex].qty).fill(0))
 
@@ -119,7 +117,6 @@ export default function ProductShow() {
 
     getProductById(id)
       .then((data) => {
-        console.log(data)
         if(data) {
           (data.photos) ? setPhotos(JSON.parse(data.photos)) : '';
           setProduct(data);
@@ -151,7 +148,6 @@ export default function ProductShow() {
     };
 
 
-    console.log(product?.colors)
     if(product.colors.length > 0) {
       orderData.colors =  selectedColors.map((index) => product?.colors[index].id)
       orderData.sizes =  selectedSizes.map((index) => product?.sizes[index].id)
