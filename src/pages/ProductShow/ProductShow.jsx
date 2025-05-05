@@ -58,7 +58,7 @@ export default function ProductShow() {
       address: '',
       notes: '',
     },
-    // validationSchema,
+    validationSchema,
     onSubmit: handleSubmit
   })
 
@@ -139,7 +139,6 @@ export default function ProductShow() {
 
 
   function handleSubmit(values) {
-
     // Gather the order data
     const orderData = {
       ...values,
@@ -148,8 +147,11 @@ export default function ProductShow() {
     };
 
 
-    if(product.colors.length > 0) {
+    if(product?.colors.length > 0) {
       orderData.colors =  selectedColors.map((index) => product?.colors[index].id)
+    }
+
+    if(product?.sizes.length > 0) {
       orderData.sizes =  selectedSizes.map((index) => product?.sizes[index].id)
     }
 
