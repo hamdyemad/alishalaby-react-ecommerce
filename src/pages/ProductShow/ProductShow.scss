@@ -2,86 +2,56 @@
     padding: 20px 0;
 
     .images {
-        .list {
-            .img {
-                background-color: #e9e9e9;
-                padding: 5px;
-                border-radius: 10px;
-                margin: 0 10px;
-                height: 150px;
-                @media (max-width: 767px) {
-                    height: 120px;
-                }
-                img {
-                    cursor: pointer;
-                    height: 100%;
-                    width: 100%;
-                    border-radius: 10px;
-                }
-            }
-        }
-        .active {
+        position: relative;
+        .img {
+            background-color: #e9e9e9;
+            padding: 5px;
             border-radius: 10px;
-            width: 400px;
-            height: 400px;
-            overflow: hidden;
-            position: relative;
+            margin: 0 10px;
+            height: 700px;
             @media(max-width: 767px) {
-                height: 300px;
+                height: 400px;
             }
             img {
-                background-color: #e9e9e9;
-                padding: 10px;
-                margin: auto;
-                width: 300px;
+                cursor: pointer;
+                height: 100%;
+                width: 100%;
                 border-radius: 10px;
-                @media (max-width: 767px) {
-                    width: 250px;
-                    margin: auto;
-                }
             }
         }
 
         /* swiper-custom.css */
-            .swiper {
-                margin-right: 0;
-                margin-left: 0;
-            }
-            .swiper-button-next,
-            .swiper-button-prev {
-                color: #fff;       /* change arrow color */
-                background-color: var(--second-color); /* optional bg */
-                padding: 10px;
-                border-radius: 9999px;
-            }
+.swiper {
+    position: static !important;
+    .swiper-pagination {
+        bottom: -25px;
 
-            .swiper-button-next::after,
-            .swiper-button-prev::after {
-            font-size: 20px;
-            }
+        .swiper-pagination-bullet {
+        background: #888;
+        opacity: 1;
+        }
 
-            .swiper-pagination-bullet {
-            background: #888;
-            opacity: 1;
-            }
+        .swiper-pagination-bullet-active {
+        background: #000;
+        }
+    }
+}
 
-            .swiper-pagination-bullet-active {
-            background: #000;
-            }
 
     }
     .prices {
         h4 {
             margin: 0px 5px;
+            font-weight: bold;
         }
         .old_price {
-            color: #c9c9c9;
+            color: #606060;
         }
     }
 
     .colors {
-        h3 {
-            margin: 0;
+        h6 {
+            width: 100px;
         }
         .color {
             margin: 0px 5px;
@@ -97,8 +67,8 @@
         }
     }
     .sizes {
-        h3 {
-            margin: 0;
+        h6 {
+            width: 100px;
         }
         .size {
             padding: 10px 5px;
@@ -120,17 +90,13 @@
         padding: 10px;
         border-radius: 25px;
         transition: all 0.3s ease-in-out;
+        width: 100%;
         &:focus {
             color: #fff;
         }
         &:hover {
             background-color: #000;
         }
-
-        @media(max-width: 767px) {
-            width: 100%;
-        }
-
     }
 
     
@@ -149,7 +115,7 @@
         padding: 10px;
         transition: all 0.3s ease-in-out;
         h6 {
-            width: 100px;
+            font-weight: bold;
         }
         &:hover {
             border-color: var(--second-color);

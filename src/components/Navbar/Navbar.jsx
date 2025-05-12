@@ -8,7 +8,7 @@ export default function Navbar(props) {
   return (
     <>
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
-        <div className="container">
+        <div className="container-fluid">
           <Link className="navbar-brand" to="/">
             <img src={logo} alt="logo" />
           </Link>
@@ -24,13 +24,13 @@ export default function Navbar(props) {
               >المنتجات</NavLink>
                 {/* <a className="nav-link" aria-current="page" href="#">Products</a> */}
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
               <NavLink
                 className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
                 to='/about'
               >معلومات عنا</NavLink>
 
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>

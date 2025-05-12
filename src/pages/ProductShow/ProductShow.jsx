@@ -31,8 +31,7 @@ export default function ProductShow() {
   let [photos, setPhotos] = useState([]);
   let [selectedColors, setSelectedColors] = useState([]);
   let [selectedSizes, setSelectedSizes] = useState([]);
-  let [activeBoxIndex, setActiveBoxIndex] = useState(1);
-  let [photosCount, setPhotosCount] = useState(0);
+  let [activeBoxIndex, setActiveBoxIndex] = useState(0);
   const swiperRef = useRef(null);
 
   let naviate = useNavigate();
@@ -120,16 +119,12 @@ export default function ProductShow() {
 
     getProductById(id)
       .then((data) => {
+        console.log(data)
         if(data) {
           let photosData = JSON.parse(data.photos);
           (data.photos) ? setPhotos(JSON.parse(data.photos)) : '';
           setProduct(data);
-          setPhotosCount(photosData.length)
-
-          if (swiperRef.current && swiperRef.current.swiper) {
-            console.log(swiperRef.current.swiper)
-            swiperRef.current.swiper.update();
-          }
+          // setPhotosCount(photosData.length)
 
           setSelectedColors(Array(data.prices[activeBoxIndex].qty).fill(0))
           setSelectedSizes(Array(data.prices[activeBoxIndex].qty).fill(0))
@@ -137,9 +132,10 @@ export default function ProductShow() {
 
       })
       .catch((err) =>  {
+        console.log(err)
         toastrError('لا يوجد منتج')
-        naviate('/')
-        toastrError(err.message)
+        // naviate('/')
+        // toastrError(err.message)
       });
 
   }, []);
@@ -202,37 +198,20 @@ export default function ProductShow() {
         <div className="row">
           <div className="col-md-8">
             <div className="images">
-              <div className="active mb-3">
-                {photos.length > 0 ? <img 
-                ref={ActiveImageRef}
-                 onMouseMove={handleMouseMove}
-                  src={apiUrl + photos[0]}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    transition: 'transform 0.1s ease',
-                    transform: `scale(${scale})`,
-                    transformOrigin: transformOrigin,
-                  }}
-                   alt="active photo" /> : <img src={defaultImage} alt="active photo" />}
-              </div>
-              <div className="list d-flex align-items-center">
-              {photosCount > 0 && (
-                    <Swiper
+              <Swiper
                       ref={swiperRef}
                       spaceBetween={0}
                       pagination={{
                         clickable: true,
                       }}
-                      navigation
+                      // navigation
                       modules={[Pagination, Navigation]}
                       breakpoints={{
                         0: {
-                          slidesPerView: 3,
+                          slidesPerView: 1,
                         },
                         768: {
-                          slidesPerView: (photosCount > 6) ? 6 : photosCount ,
+                          slidesPerView: 1,
                         },
                       }}
                     >
@@ -241,16 +220,11 @@ export default function ProductShow() {
                     onClick={changeImageView} key={index} src={apiUrl + photo} alt="" /></div></SwiperSlide>;
                   }) : ''}
                   
-                    </Swiper>
-              )}
-              </div>
-              {console.log(photosCount)}
-              
-              
+                  </Swiper>
             </div>
           </div>
           <div className="col-md-4">
-            <div className="info mt-3">
+            <div className="info mt-5">
               <h2>{product?.name}</h2>
               <div className="prices d-flex align-items-center">
                 <h4 className="text-decoration-line-through old_price fw-bold">{product?.price?.price} جنيه</h4>
@@ -356,10 +330,8 @@ export default function ProductShow() {
                 {(formik.touched.notes && formik.errors.notes) ? <div className="text-danger">{formik.errors.notes}</div> : ''}
               </div>
               <button type="submit" 
-              className="btn submit_form">أشترى الان الدفع بعد الاستلام</button>
+              className="btn submit_form btn-block">اطلب الأن</button>
             </form>
-
-
           </div>
         </div>
       </div>

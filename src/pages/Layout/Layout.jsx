@@ -4,7 +4,7 @@ import Navbar from '../../components/Navbar/Navbar';
 import Products from '../Products/Products';
 import { Outlet } from 'react-router-dom';
 import {getAllSettings} from '../../api/Setting';
-import defaultLogo from '../../assets/logo.jpeg';
+import defaultLogo from '../../assets/default.png';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -37,7 +37,7 @@ export default function Layout() {
 
   return <>
     <Navbar logo={logo}/>
-      <div className="container">
+      <div className="container-fluid">
         <ToastContainer />
         <Outlet></Outlet>
     </div>
