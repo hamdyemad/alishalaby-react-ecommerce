@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./ProductShow.scss";
 import { useNavigate, useParams } from "react-router-dom";
-import deliveryOnCashImg from "../../assets/الدفع عند الاستلام.png";
-import customerServiceImg from "../../assets/خدمة عملاء.png";
+import deliveryOnCashImg from "../../assets/cash_on_delivery.png";
+import customerServiceImg from "../../assets/customer_service.png";
 import guaranteeImg from "../../assets/guarantee.png";
 
 import BreadCrumb from "../../components/BreadCrumb/BreadCrumb";
