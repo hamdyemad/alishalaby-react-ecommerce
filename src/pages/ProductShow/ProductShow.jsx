@@ -444,10 +444,11 @@ export default function ProductShow() {
                 اطلب الأن
               </button>
             </form>
+            <hr />
             <div className="information">
               <div className="card mb-3 mt-3">
                 <div className="card-header">
-                  <h4>سياسة الاسترجاع و الاستبدال </h4>
+                  <h4 className="p-0 m-0">سياسة الاسترجاع و الاستبدال </h4>
                 </div>
                 <div className="card-body">
                   سياسة الاسترجاع أو الاستبدال تتم في وقت استلام الطلب، حيث
@@ -458,7 +459,7 @@ export default function ProductShow() {
               </div>
               <div className="card mb-3">
                 <div className="card-header">
-                  <h4>التوصيل</h4>
+                  <h4 className="p-0 m-0">التوصيل</h4>
                 </div>
                 <div className="card-body">
                   يتم تجهيز جميع الطلبات في خلال ٣ـ٧ أيام عمل.
@@ -467,7 +468,7 @@ export default function ProductShow() {
 
               <div className="card mb-3">
                 <div className="card-header">
-                  <h4>الشحن</h4>
+                  <h4 className="p-0 m-0">الشحن</h4>
                 </div>
                 <div className="card-body">
                   تتراوح رسوم الشحن من 40 جنيها مصريا إلى 125 جنيها مصريا في
@@ -475,7 +476,7 @@ export default function ProductShow() {
                   المحمول أو رقم الواتس الخاص بك
                 </div>
               </div>
-              <div className="icons">
+              <div className="icons mt-3">
                 <div className="icon">
                   <img src={deliveryOnCashImg} alt="" />
                   <h6>الدفع عند الاستلام</h6>
