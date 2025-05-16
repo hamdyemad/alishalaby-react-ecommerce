@@ -1,27 +1,28 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./ProductShow.scss";
 import { useNavigate, useParams } from "react-router-dom";
-import defaultImage from "../../assets/product/default.jpg";
+import deliveryOnCashImg from "../../assets/الدفع عند الاستلام.png";
+import customerServiceImg from "../../assets/خدمة عملاء.png";
+import guaranteeImg from "../../assets/guarantee.png";
+
 import BreadCrumb from "../../components/BreadCrumb/BreadCrumb";
 import { getProductById } from "../../api/Product";
 import { createOrder } from "../../api/Order";
 
 import * as Yup from "yup";
 
-
 // Toastr
-import {toastrError, toastrSuccess} from '../../components/Toastr/Toastr'
+import { toastrError, toastrSuccess } from "../../components/Toastr/Toastr";
 
 // Swiper
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
-
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/scrollbar';
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
 import { useFormik } from "formik";
 
 export default function ProductShow() {
@@ -37,68 +38,60 @@ export default function ProductShow() {
   let naviate = useNavigate();
   const ActiveImageRef = useRef(null);
   const [scale, setScale] = useState(1);
-  const [transformOrigin, setTransformOrigin] = useState('center center');
-
-
-
+  const [transformOrigin, setTransformOrigin] = useState("center center");
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('الأسم مطلوب'),
-    address: Yup.string().required('العنوان مطلوب'),
-    phone: Yup.string().required('رقم الهاتف مطلوب'),
+    name: Yup.string().required("الأسم مطلوب"),
+    address: Yup.string().required("العنوان مطلوب"),
+    phone: Yup.string().required("رقم الهاتف مطلوب"),
     phone2: Yup.string(),
-    notes: Yup.string()
+    notes: Yup.string(),
   });
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      phone: '',
-      phone2: '',
-      address: '',
-      notes: '',
+      name: "",
+      phone: "",
+      phone2: "",
+      address: "",
+      notes: "",
     },
     validationSchema,
-    onSubmit: handleSubmit
-  })
+    onSubmit: handleSubmit,
+  });
 
-
-  function changeCounter(type = '+') {
-    if(type == '+') {
-      count++
+  function changeCounter(type = "+") {
+    if (type == "+") {
+      count++;
     } else {
-      if(count > 1) {
-        count--
+      if (count > 1) {
+        count--;
       }
     }
-    setCounter(count)
+    setCounter(count);
   }
 
   // Function to handle color selection for each quantity
   function changeColor(colorIndex, quantityIndex) {
     let updatedColors = [...selectedColors];
-    updatedColors[quantityIndex] = colorIndex;  // Store the color selection for the quantity
+    updatedColors[quantityIndex] = colorIndex; // Store the color selection for the quantity
     setSelectedColors(updatedColors);
   }
 
   // Function to handle size selection for each quantity
   function changeSize(sizeIndex, quantityIndex) {
     let updatedSizes = [...selectedSizes];
-    updatedSizes[quantityIndex] = sizeIndex;  // Store the size selection for the quantity
+    updatedSizes[quantityIndex] = sizeIndex; // Store the size selection for the quantity
     setSelectedSizes(updatedSizes);
   }
 
-
-
   function changeBox(boxIndex, event) {
-    setActiveBoxIndex(boxIndex)
+    setActiveBoxIndex(boxIndex);
 
-    setSelectedColors(Array(product.prices[boxIndex].qty).fill(0))
-    setSelectedSizes(Array(product.prices[boxIndex].qty).fill(0))
-
-
+    setSelectedColors(Array(product.prices[boxIndex].qty).fill(0));
+    setSelectedSizes(Array(product.prices[boxIndex].qty).fill(0));
   }
 
   function handleMouseMove(e) {
@@ -107,128 +100,139 @@ export default function ProductShow() {
     const offsetY = e.clientY - top;
 
     // Calculate the scale based on mouse position
-    const scaleValue = 1 + (Math.abs(offsetX - width / 2) + Math.abs(offsetY - height / 2)) / 500;
+    const scaleValue =
+      1 +
+      (Math.abs(offsetX - width / 2) + Math.abs(offsetY - height / 2)) / 500;
 
     // Set the scale value and transform origin to the mouse position
     setScale(scaleValue);
-    setTransformOrigin(`${(offsetX / width) * 100}% ${(offsetY / height) * 100}%`);
-
+    setTransformOrigin(
+      `${(offsetX / width) * 100}% ${(offsetY / height) * 100}%`
+    );
   }
 
   useEffect(() => {
-
     getProductById(id)
       .then((data) => {
-        console.log(data)
-        if(data) {
+        console.log(data);
+        if (data) {
           let photosData = JSON.parse(data.photos);
-          (data.photos) ? setPhotos(JSON.parse(data.photos)) : '';
+          data.photos ? setPhotos(JSON.parse(data.photos)) : "";
           setProduct(data);
           // setPhotosCount(photosData.length)
 
-          setSelectedColors(Array(data.prices[activeBoxIndex].qty).fill(0))
-          setSelectedSizes(Array(data.prices[activeBoxIndex].qty).fill(0))
+          setSelectedColors(Array(data.prices[activeBoxIndex].qty).fill(0));
+          setSelectedSizes(Array(data.prices[activeBoxIndex].qty).fill(0));
         }
-
       })
-      .catch((err) =>  {
-        console.log(err)
-        toastrError('لا يوجد منتج')
+      .catch((err) => {
+        console.log(err);
+        toastrError("لا يوجد منتج");
         // naviate('/')
         // toastrError(err.message)
       });
-
   }, []);
-
-
-
-
 
   function changeImageView(e) {
     let clicked_img = e.target;
     ActiveImageRef.current.src = clicked_img.src;
   }
 
-
   function handleSubmit(values) {
     // Gather the order data
     const orderData = {
       ...values,
       product_id: product.id,
-      price_id: product?.prices[activeBoxIndex].id
+      price_id: product?.prices[activeBoxIndex].id,
     };
 
-
-    if(product?.colors.length > 0) {
-      orderData.colors =  selectedColors.map((index) => product?.colors[index].id)
+    if (product?.colors.length > 0) {
+      orderData.colors = selectedColors.map(
+        (index) => product?.colors[index].id
+      );
     }
 
-    if(product?.sizes.length > 0) {
-      orderData.sizes =  selectedSizes.map((index) => product?.sizes[index].id)
+    if (product?.sizes.length > 0) {
+      orderData.sizes = selectedSizes.map((index) => product?.sizes[index].id);
     }
 
-    createOrder(orderData).then((res) => {
-      toastrSuccess(res.message)
-      if(res.status) {
-        formik.resetForm();
-        setSelectedColors(Array(product.prices[activeBoxIndex].qty).fill(0))
-        setSelectedSizes(Array(product.prices[activeBoxIndex].qty).fill(0))
-      } else {
-        toastrError(res.message)
-      }
-    }).catch((err) => {
-      const formatted = {};
-      const errorObject = err.response.data.errors;
-      for(const key in errorObject) {
-        if (Array.isArray(errorObject[key]) && errorObject[key].length > 0) {
-          formatted[key] = errorObject[key][0]; // Take the first error message
+    createOrder(orderData)
+      .then((res) => {
+        toastrSuccess(res.message);
+        if (res.status) {
+          formik.resetForm();
+          setSelectedColors(Array(product.prices[activeBoxIndex].qty).fill(0));
+          setSelectedSizes(Array(product.prices[activeBoxIndex].qty).fill(0));
+        } else {
+          toastrError(res.message);
         }
-      }
-      formik.setErrors(formatted)
-      toastrError(err.response.data.message)
-    })
+      })
+      .catch((err) => {
+        const formatted = {};
+        const errorObject = err.response.data.errors;
+        for (const key in errorObject) {
+          if (Array.isArray(errorObject[key]) && errorObject[key].length > 0) {
+            formatted[key] = errorObject[key][0]; // Take the first error message
+          }
+        }
+        formik.setErrors(formatted);
+        toastrError(err.response.data.message);
+      });
   }
-
-
 
   return (
     <>
       <div className="show_product">
-        <BreadCrumb name={product?.name}/>
+        <BreadCrumb name={product?.name} />
         <div className="row">
           <div className="col-md-8">
             <div className="images">
               <Swiper
-                      ref={swiperRef}
-                      spaceBetween={0}
-                      pagination={{
-                        clickable: true,
-                      }}
-                      // navigation
-                      modules={[Pagination, Navigation]}
-                      breakpoints={{
-                        0: {
-                          slidesPerView: 1,
-                        },
-                        768: {
-                          slidesPerView: 1,
-                        },
-                      }}
-                    >
-                  {photos?.length > 0 ? photos?.map((photo, index) => {
-                    return  <SwiperSlide><div className="img"><img  
-                    onClick={changeImageView} key={index} src={apiUrl + photo} alt="" /></div></SwiperSlide>;
-                  }) : ''}
-                  
-                  </Swiper>
+                ref={swiperRef}
+                spaceBetween={0}
+                pagination={{
+                  clickable: true,
+                }}
+                // navigation
+                modules={[Pagination, Navigation]}
+                breakpoints={{
+                  0: {
+                    slidesPerView: 1,
+                  },
+                  768: {
+                    slidesPerView: 1,
+                  },
+                }}
+              >
+                {photos?.length > 0
+                  ? photos?.map((photo, index) => {
+                      return (
+                        <SwiperSlide>
+                          <div className="img">
+                            <img
+                              onClick={changeImageView}
+                              key={index}
+                              src={apiUrl + photo}
+                              alt=""
+                            />
+                          </div>
+                        </SwiperSlide>
+                      );
+                    })
+                  : ""}
+              </Swiper>
             </div>
           </div>
           <div className="col-md-4">
             <div className="info mt-5">
               <h2>{product?.name}</h2>
               <div className="prices d-flex align-items-center">
-                <h4 className="text-decoration-line-through old_price fw-bold">{product?.price?.price} جنيه</h4>
-                <h4 className="main_price  fw-bold">{product?.price?.price_after_discount} جنيه</h4>
+                <h4 className="text-decoration-line-through old_price fw-bold">
+                  {product?.price?.price}جنيه
+                </h4>
+                <h4 className="main_price  fw-bold">
+                  {product?.price?.price_after_discount}جنيه
+                </h4>
               </div>
               <p dangerouslySetInnerHTML={{ __html: product?.description }}></p>
             </div>
@@ -237,101 +241,255 @@ export default function ProductShow() {
             <form action="" onSubmit={formik.handleSubmit}>
               <div className="prices">
                 {product?.prices?.map((priceObj, boxIndex) => {
-                  return <div className={`box ${(activeBoxIndex == boxIndex) ? 'active' : ''}`} 
-                  id={`box-${boxIndex}`} onClick={(e) => changeBox(boxIndex, e)} key={boxIndex}>
-                    <div className="header d-flex align-items-center justify-content-between">
-                      <h6 className="text">{priceObj.description}</h6>
-                      <div className="prices">
-                        <h6 className="old_price text-decoration-line-through fw-bold">{priceObj.price} جنيه</h6>
-                        <h6 className="price  fw-bold">{priceObj.price_after_discount} جنيه</h6>
+                  return (
+                    <div
+                      className={`box ${
+                        activeBoxIndex == boxIndex ? "active" : ""
+                      }`}
+                      id={`box-${boxIndex}`}
+                      onClick={(e) => changeBox(boxIndex, e)}
+                      key={boxIndex}
+                    >
+                      <div className="header d-flex align-items-center justify-content-between">
+                        <h6 className="text">{priceObj.description}</h6>
+                        <div className="prices">
+                          <h6 className="old_price text-decoration-line-through fw-bold">
+                            {priceObj.price}جنيه
+                          </h6>
+                          <h6 className="price  fw-bold">
+                            {priceObj.price_after_discount}جنيه
+                          </h6>
+                        </div>
                       </div>
-                    </div>
-                    {(product?.colors.length > 0 || product?.sizes.length > 0) ? <div className={`card mt-3 ${(activeBoxIndex != boxIndex) ? 'd-none' : ''}`} onClick={(e) => e.stopPropagation()}>
-                      <div className="card-header">
-                        اللون, المقاس
-                      </div>
-                      <div className="card-body">
-                        {[...Array(priceObj.qty)].map((val, qtyObjectIndex) => {
-                          return <div className="object" id={`object-${qtyObjectIndex}`} key={qtyObjectIndex}>
-                            #{qtyObjectIndex + 1}
-                            <div className="d-flex align-items-center mb-2 colors">
-                              <h6>الالوان: </h6>
-                              <select className="form-control"
-                                value={selectedColors[qtyObjectIndex] || 0}
-                              onChange={(e) => changeColor(e.target.value,qtyObjectIndex)}>
-                                {product?.colors?.map((color, colorIndex) => {
-                                  return <option key={colorIndex} value={colorIndex} 
-                                  id={`color-${colorIndex}`} 
-                                  >{color?.variant}</option>;
-                                })}
-                              </select>
-                            </div>
-                            {product?.sizes.length > 0 ? <div className="sizes d-flex align-items-center mb-3">
-                              <h6>المقاسات: </h6>
-                              <select className="form-control" 
-                                value={selectedSizes[qtyObjectIndex] || 0}
-                              onChange={(e) => changeSize(e.target.value, qtyObjectIndex)}>
-                                {
-                                  product?.sizes?.map((size, sizeIndex) => {
-                                    return <option key={sizeIndex} value={sizeIndex} 
-                                    id={`size-${sizeIndex}`} 
-                                    >{size?.variant}</option>;
-                                  })
-                                }
-                              </select>
-                            </div> : ''}      
-                            {[...Array(priceObj.qty)].length - 1 > qtyObjectIndex ? <hr />  : ''}
-                                       
+                      {product?.colors.length > 0 ||
+                      product?.sizes.length > 0 ? (
+                        <div
+                          className={`card mt-3 ${
+                            activeBoxIndex != boxIndex ? "d-none" : ""
+                          }`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="card-header">اللون, المقاس</div>
+                          <div className="card-body">
+                            {[...Array(priceObj.qty)].map(
+                              (val, qtyObjectIndex) => {
+                                return (
+                                  <div
+                                    className="object"
+                                    id={`object-${qtyObjectIndex}`}
+                                    key={qtyObjectIndex}
+                                  >
+                                    #{qtyObjectIndex + 1}
+                                    <div className="d-flex align-items-center mb-2 colors">
+                                      <h6>الالوان: </h6>
+                                      <select
+                                        className="form-control"
+                                        value={
+                                          selectedColors[qtyObjectIndex] || 0
+                                        }
+                                        onChange={(e) =>
+                                          changeColor(
+                                            e.target.value,
+                                            qtyObjectIndex
+                                          )
+                                        }
+                                      >
+                                        {product?.colors?.map(
+                                          (color, colorIndex) => {
+                                            return (
+                                              <option
+                                                key={colorIndex}
+                                                value={colorIndex}
+                                                id={`color-${colorIndex}`}
+                                              >
+                                                {color?.variant}
+                                              </option>
+                                            );
+                                          }
+                                        )}
+                                      </select>
+                                    </div>
+                                    {product?.sizes.length > 0 ? (
+                                      <div className="sizes d-flex align-items-center mb-3">
+                                        <h6>المقاسات: </h6>
+                                        <select
+                                          className="form-control"
+                                          value={
+                                            selectedSizes[qtyObjectIndex] || 0
+                                          }
+                                          onChange={(e) =>
+                                            changeSize(
+                                              e.target.value,
+                                              qtyObjectIndex
+                                            )
+                                          }
+                                        >
+                                          {product?.sizes?.map(
+                                            (size, sizeIndex) => {
+                                              return (
+                                                <option
+                                                  key={sizeIndex}
+                                                  value={sizeIndex}
+                                                  id={`size-${sizeIndex}`}
+                                                >
+                                                  {size?.variant}
+                                                </option>
+                                              );
+                                            }
+                                          )}
+                                        </select>
+                                      </div>
+                                    ) : (
+                                      ""
+                                    )}
+                                    {[...Array(priceObj.qty)].length - 1 >
+                                    qtyObjectIndex ? (
+                                      <hr />
+                                    ) : (
+                                      ""
+                                    )}
+                                  </div>
+                                );
+                              }
+                            )}
                           </div>
-                        })}
-                      </div>
-                    </div>: ''}
-                  </div>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  );
                 })}
               </div>
               <div className="form-group mb-3">
-                <input className="form-control" type="text" placeholder="الاسم"name="name"
+                <input
+                  className="form-control"
+                  type="text"
+                  placeholder="الاسم"
+                  name="name"
                   value={formik.values.name}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  />
-                  {(formik.touched.name && formik.errors.name) ? <div className="text-danger">{formik.errors.name}</div> : ''}
+                />
+                {formik.touched.name && formik.errors.name ? (
+                  <div className="text-danger">{formik.errors.name}</div>
+                ) : (
+                  ""
+                )}
               </div>
               <div className="form-group mb-3">
-                <input className="form-control" type="text" placeholder="رقم الهاتف"name="phone"
+                <input
+                  className="form-control"
+                  type="text"
+                  placeholder="رقم الهاتف"
+                  name="phone"
                   value={formik.values.phone}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  />
-                  {(formik.touched.phone && formik.errors.phone) ? <div className="text-danger">{formik.errors.phone}</div> : ''}
+                />
+                {formik.touched.phone && formik.errors.phone ? (
+                  <div className="text-danger">{formik.errors.phone}</div>
+                ) : (
+                  ""
+                )}
               </div>
               <div className="form-group mb-3">
-                <input className="form-control" type="text" placeholder="رقم الهاتف الثانى"name="phone2"
+                <input
+                  className="form-control"
+                  type="text"
+                  placeholder="رقم الهاتف الثانى"
+                  name="phone2"
                   value={formik.values.phone2}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  />
-                  {(formik.touched.phone2 && formik.errors.phone2) ? <div className="text-danger">{formik.errors.phone2}</div> : ''}
+                />
+                {formik.touched.phone2 && formik.errors.phone2 ? (
+                  <div className="text-danger">{formik.errors.phone2}</div>
+                ) : (
+                  ""
+                )}
               </div>
               <div className="form-group mb-3">
-                <input className="form-control" type="text" placeholder="العنوان"name="address"
+                <input
+                  className="form-control"
+                  type="text"
+                  placeholder="العنوان"
+                  name="address"
                   value={formik.values.address}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  />
-                  {(formik.touched.address && formik.errors.address) ? <div className="text-danger">{formik.errors.address}</div> : ''}
+                />
+                {formik.touched.address && formik.errors.address ? (
+                  <div className="text-danger">{formik.errors.address}</div>
+                ) : (
+                  ""
+                )}
               </div>
               <div className="form-group">
-                <textarea name="notes" className="form-control" placeholder="الملاحظات"
-                value={formik.values.notes}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                <textarea
+                  name="notes"
+                  className="form-control"
+                  placeholder="الملاحظات"
+                  value={formik.values.notes}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 ></textarea>
-                {(formik.touched.notes && formik.errors.notes) ? <div className="text-danger">{formik.errors.notes}</div> : ''}
+                {formik.touched.notes && formik.errors.notes ? (
+                  <div className="text-danger">{formik.errors.notes}</div>
+                ) : (
+                  ""
+                )}
               </div>
-              <button type="submit" 
-              className="btn submit_form btn-block">اطلب الأن</button>
+              <button type="submit" className="btn submit_form btn-block">
+                اطلب الأن
+              </button>
             </form>
+            <div className="information">
+              <div className="card mb-3 mt-3">
+                <div className="card-header">
+                  <h4>سياسة الاسترجاع و الاستبدال </h4>
+                </div>
+                <div className="card-body">
+                  سياسة الاسترجاع أو الاستبدال تتم في وقت استلام الطلب، حيث
+                  يُرجى فحص المنتجات بعناية عند حضور المندوب، وفي حال وجود أي
+                  ملاحظات يمكن التعامل معها فورًا، غير مسئولين عن الطلبية في
+                  حالة مغادرة المندوب
+                </div>
+              </div>
+              <div className="card mb-3">
+                <div className="card-header">
+                  <h4>التوصيل</h4>
+                </div>
+                <div className="card-body">
+                  يتم تجهيز جميع الطلبات في خلال ٣ـ٧ أيام عمل.
+                </div>
+              </div>
+
+              <div className="card mb-3">
+                <div className="card-header">
+                  <h4>الشحن</h4>
+                </div>
+                <div className="card-body">
+                  تتراوح رسوم الشحن من 40 جنيها مصريا إلى 125 جنيها مصريا في
+                  جميع أنحاء مصر لتأكيد الأوردر سيتم التواصل معك عن طريق الهاتف
+                  المحمول أو رقم الواتس الخاص بك
+                </div>
+              </div>
+              <div className="icons">
+                <div className="icon">
+                  <img src={deliveryOnCashImg} alt="" />
+                  <h6>الدفع عند الاستلام</h6>
+                </div>
+                <div className="icon">
+                  <img src={customerServiceImg} alt="" />
+                  <h6>خدمة عملاء</h6>
+                </div>
+                <div className="icon text-center">
+                  <img src={guaranteeImg} alt="" />
+                  <h6>ضمان 100 %</h6>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
